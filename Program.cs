@@ -37,7 +37,7 @@ class Program
 
     if ((bool) meta["valid"])
     {
-      Console.WriteLine("[INFO] License={0} Valid={1} ValidationCode={2}", license["id"], meta["detail"], meta["constant"]);
+      Console.WriteLine("[INFO] License={0} Valid={1} ValidationCode={2}", license["id"], meta["detail"], meta["code"]);
     }
     else
     {
@@ -45,7 +45,7 @@ class Program
         "[INFO] License={0} Invalid={1} ValidationCode={2}",
         license != null ? license["id"] : "N/A",
         meta["detail"],
-        meta["constant"]
+        meta["code"]
       );
     }
   }
