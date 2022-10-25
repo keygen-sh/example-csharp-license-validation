@@ -55,7 +55,13 @@ class Program
     var response = keygen.Execute<Document>(request);
     if (response.Data.Errors != null)
     {
-      Console.WriteLine("[ERROR] Status={0} Errors={1}", response.StatusCode, response.Data.Errors);
+      Console.Write("[ERROR] Status={0}", response.StatusCode);
+
+      response.Data.Errors.ForEach(err =>
+        Console.Write(" Error={0} Code={1}", $"{err.Title} {err.Detail}", err.Code)
+      );
+
+      Console.WriteLine();
 
       Environment.Exit(1);
     }
