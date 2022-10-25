@@ -2,6 +2,38 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 
+public record Attributes
+{
+  public DateTime Expiry { get; set; }
+}
+
+public record Data
+{
+  public string ID { get; set; }
+  public Attributes Attributes { get; set; }
+}
+
+public record Error
+{
+  public string Title { get; set; }
+  public string Detail { get; set; }
+  public string Code { get; set; }
+}
+
+public record Meta
+{
+  public string Detail { get; set; }
+  public string Code { get; set; }
+  public bool Valid { get; set; }
+}
+
+public record Document
+{
+  public Meta Meta { get; set; }
+  public Data Data { get; set; }
+  public List<Error> Errors { get; set; }
+}
+
 class Program
 {
   // This is your Keygen account ID.
@@ -20,32 +52,25 @@ class Program
       meta = new { key = "DEMO-AABCCD-7F6E4A-E64012-340C88-V3" }
     });
 
-    var response = keygen.Execute<Dictionary<string, object>>(request);
-    if (response.Data.ContainsKey("errors"))
+    var response = keygen.Execute<Document>(request);
+    if (response.Data.Errors != null)
     {
-      var errors = (RestSharp.JsonArray) response.Data["errors"];
-      if (errors != null)
-      {
-        Console.WriteLine("[ERROR] Status={0} Errors={1}", response.StatusCode, errors);
+      Console.WriteLine("[ERROR] Status={0} Errors={1}", response.StatusCode, response.Data.Errors);
 
-        Environment.Exit(1);
-      }
+      Environment.Exit(1);
     }
 
-    var license = (Dictionary<string, object>) response.Data["data"];
-    var meta = (Dictionary<string, object>) response.Data["meta"];
-
-    if ((bool) meta["valid"])
+    if (response.Data.Meta.Valid)
     {
-      Console.WriteLine("[INFO] License={0} Valid={1} ValidationCode={2}", license["id"], meta["detail"], meta["code"]);
+      Console.WriteLine("[INFO] License={0} Expiry={1} Valid={2} Code={3}", response.Data.Data.ID, response.Data.Data.Attributes.Expiry, response.Data.Meta.Valid, response.Data.Meta.Code);
     }
     else
     {
       Console.WriteLine(
-        "[INFO] License={0} Invalid={1} ValidationCode={2}",
-        license != null ? license["id"] : "N/A",
-        meta["detail"],
-        meta["code"]
+        "[INFO] License={0} Invalid={1} Code={2}",
+        response.Data.Data != null ? response.Data.Data.ID : "N/A",
+        response.Data.Meta.Detail,
+        response.Data.Meta.Code
       );
     }
   }
