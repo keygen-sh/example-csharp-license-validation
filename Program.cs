@@ -58,7 +58,7 @@ class Program
       Console.Write("[ERROR] Status={0}", response.StatusCode);
 
       response.Data.Errors.ForEach(err =>
-        Console.Write(" Error={0} Code={1}", $"{err.Title} {err.Detail}", err.Code)
+        Console.Write(" Title={0} Detail={1} Code={2}", err.Title, err.Detail, err.Code)
       );
 
       Console.WriteLine();
@@ -68,7 +68,13 @@ class Program
 
     if (response.Data.Meta.Valid)
     {
-      Console.WriteLine("[INFO] License={0} Expiry={1} Valid={2} Code={3}", response.Data.Data.ID, response.Data.Data.Attributes.Expiry, response.Data.Meta.Valid, response.Data.Meta.Code);
+      Console.WriteLine(
+        "[INFO] License={0} Expiry={1} Valid={2} Code={3}",
+        response.Data.Data.ID,
+        response.Data.Data.Attributes.Expiry,
+        response.Data.Meta.Valid,
+        response.Data.Meta.Code
+      );
     }
     else
     {
