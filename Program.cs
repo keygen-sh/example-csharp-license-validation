@@ -1,6 +1,7 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public record Attributes
 {
@@ -41,7 +42,12 @@ class Program
   // Available at: https://app.keygen.sh/settings
   const string KEYGEN_ACCOUNT_ID = "demo";
 
-  public static void Main (string[] args)
+  static void Main()
+  {
+    MainAsync().Wait();
+  }
+
+  static async Task MainAsync()
   {
     var keygen = new RestClient(string.Format("https://api.keygen.sh/v1/accounts/{0}", KEYGEN_ACCOUNT_ID));
     var request = new RestRequest("licenses/actions/validate-key", Method.POST);
@@ -49,10 +55,11 @@ class Program
     request.AddHeader("Content-Type", "application/vnd.api+json");
     request.AddHeader("Accept", "application/vnd.api+json");
     request.AddJsonBody(new {
+      // In a real app, this license key should be dynamic, based on user input.
       meta = new { key = "DEMO-AABCCD-7F6E4A-E64012-340C88-V3" }
     });
 
-    var response = keygen.Execute<Document>(request);
+    var response = await keygen.ExecuteAsync<Document>(request);
     if (response.Data.Errors != null)
     {
       Console.Write("[ERROR] Status={0}", response.StatusCode);
