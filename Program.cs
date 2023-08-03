@@ -50,7 +50,7 @@ class Program
   static async Task MainAsync()
   {
     var keygen = new RestClient(string.Format("https://api.keygen.sh/v1/accounts/{0}", KEYGEN_ACCOUNT_ID));
-    var request = new RestRequest("licenses/actions/validate-key", Method.POST);
+    var request = new RestRequest("licenses/actions/validate-key", Method.Post);
 
     request.AddHeader("Content-Type", "application/vnd.api+json");
     request.AddHeader("Accept", "application/vnd.api+json");
